@@ -1,0 +1,32 @@
+# Scala and SBT
+target/
+project/target/
+project/project/
+
+# Metals and VSCode
+.bsp/
+.metals/
+.vscode/
+
+# IDEA
+.idea/
+*.iml
+
+# History
+.history3
+
+# Logs and temp files
+logs/
+*.log
+tmp/
+task-temp-directory/
+
+# Scala specific
+*.class
+*.log
+*.tmp
+
+# Other IDEs and build tools
+.classpath
+.project
+.settings/
