@@ -30,3 +30,4 @@ task-temp-directory/
 .classpath
 .project
 .settings/
+.env

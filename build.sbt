@@ -5,7 +5,12 @@ version := "1.0"
 scalaVersion := "3.4.2"
 
 libraryDependencies ++= Seq(
-  ("org.apache.spark" %% "spark-sql" % "3.5.1" % "provided").cross(CrossVersion.for3Use2_13)
+  ("org.apache.spark" %% "spark-sql" % "3.5.1" % "provided").cross(CrossVersion.for3Use2_13),
+  "com.softwaremill.sttp.client4" %% "core" % "4.0.0-M14",
+  "com.softwaremill.sttp.client4" %% "monix" % "4.0.0-M14",
+  "com.softwaremill.sttp.client4" %% "circe" % "4.0.0-M14",
+  "io.circe" %% "circe-generic" % "0.14.7",
+  "com.github.pureconfig" %% "pureconfig-core" % "0.17.6"
 )
 
 Compile / run / fork := true
