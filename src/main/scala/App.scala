@@ -1,25 +1,34 @@
 import scala.collection.mutable
+import scala.util.Try
 
 // ----------------------------------------------------------------
 
 object App {
   import AppConfig.loadConfig
   import TwitchConfig.*
-  import FetchUsers.{ UserResponse, fetchUsers }
-  import FetchGames.{ GameResponse, fetchGames }
-  import FetchStreams.{ StreamResponse, fetchStreams }
+  import FetchUsers.{ User, fetchUsers }
+  import FetchGames.{ Game, fetchMoreGames }
+  import FetchStreams.{ Stream, fetchMoreStreams }
   
   case class GameInfo(streamers: Int, viewers: Int)
 
   // ----------------------------------------------------------------
 
   def main(args: Array[String]): Unit = {
+    if (args.length > 2) {
+      throw new IllegalArgumentException("To many arguments provided.")
+    }
+
+    val gamesToFetch: Int = Try(args(0).toInt).getOrElse(throw new IllegalArgumentException("First argument is not an integer"))
+    val streamsToFetch: Int = Try(args(1).toInt).getOrElse(throw new IllegalArgumentException("Second argument is not an integer"))
+
+
     val config = loadConfig()
 
     config match {
       case Right(TwitchConfig(clientId, secret, apiKey)) => {
         fetchUsers(clientId, apiKey) match {
-          case Right(users) => users.foreach { user =>
+          case Right(users: List[User]) => users.foreach { (user: User) =>
             println("---------------------------------------------------")
             println(s"User: ${user.display_name}")
             println(s"Login: ${user.login}")
@@ -33,15 +42,15 @@ object App {
 
         val gamesStatistics: mutable.Map[String, GameInfo] = mutable.Map.empty[String, GameInfo]
 
-        fetchGames(clientId, apiKey) match {
-          case Right(games) => games.foreach { game =>
+        fetchMoreGames(clientId, apiKey, gamesToFetch) match {
+          case Right(games: List[Game]) => games.foreach { (game: Game) =>
             gamesStatistics += (game.name -> GameInfo(0, 0))
           }
           case Left(error) => println(error)
         }
 
-        fetchStreams(clientId, apiKey) match {
-          case Right(streams) => streams.foreach { stream =>
+        fetchMoreStreams(clientId, apiKey, streamsToFetch) match {
+          case Right(streams: List[Stream]) => streams.foreach { (stream: Stream) =>
             gamesStatistics.get(stream.game_name) match {
               case Some(info) =>
                 gamesStatistics.update(stream.game_name, GameInfo(info.streamers + 1, info.viewers + stream.viewer_count))
