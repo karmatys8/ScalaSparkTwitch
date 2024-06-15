@@ -23,7 +23,12 @@ object FetchUsers {
   case class UserResponse(data: List[User])
 
   def fetchUsers(clientId: String, apiKey: String): Either[String, List[User]] = {
-    val request: Request[Either[ResponseException[String, io.circe.Error], UserResponse]] = basicRequest
+    val request: Request[
+        Either[
+          ResponseException[String, io.circe.Error],
+          UserResponse
+        ]
+      ] = basicRequest
       .get(uri"https://api.twitch.tv/helix/users?login=twitchdev")
       .header("Authorization", s"Bearer $apiKey")
       .header("Client-Id", clientId)
